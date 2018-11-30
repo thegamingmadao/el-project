@@ -1,0 +1,47 @@
+---
+- name: Install Dependencies
+  hosts: aws-hosts
+  become: true
+ 
+  tasks:
+    - name: Add the elasticsearch apt signing key, use whicher key is at the URL
+      apt_key:
+        url: https://artifacts.elastic.co/GPG-KEY-elasticsearch
+        state: present    
+   
+    - name: Add the elasticsearch repository and update apt	
+      apt_repository: 
+        repo: 'deb https://artifacts.elastic.co/packages/6.x/apt stable main' 
+        state: present 
+        filename: 'elastic_repo' 
+        update_cache: 'yes'
+      become: true
+          
+    - name: Install java
+      package:
+        name: default-jre
+        state: present
+        
+    - name: Install elasticsearch
+      package:
+        name: elasticsearch
+        state: present
+    
+    - name: Install logstash
+      package:
+        name: logstash
+        state: present
+
+    - name: Copy logstash configuration files and some test logfiles
+      copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      with_items:
+        - { src: '~/el-project/configuration-files/logstash/', dest: '/etc/logstash/conf.d/' }
+        - { src: '~/el-project/logs/', dest: '/home/raddit-user/logs/'}
+
+    - name: start logstash
+      service:
+        name: logstash
+        state: started
+        enabled: true
