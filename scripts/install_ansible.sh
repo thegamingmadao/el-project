@@ -15,8 +15,8 @@ sudo apt-get update
 #Install Ansible
 sudo apt-get install ansible
 
-#Install dependency library to work with google compute
-pip install apache-libcloud
+#Install dependency library to work with aws
+pip install boto 
 
 #Export ANSIBLE-CONFIG , this allows ansible to use the ansible.cfg from a world writable directory
 export ANSIBLE_CONFIG=~/iac-tutorial/ansible/ansible.cfg
